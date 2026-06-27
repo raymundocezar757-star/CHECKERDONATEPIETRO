@@ -7,9 +7,21 @@ exports.handler = async (event, context) => {
     const data = JSON.parse(event.body);
     const { amount, customer, item, utm } = data;
 
-    // Use environment variable for security, or fallback to a hardcoded test value during development
-    // (In production, the user must set DUTTYFY_PIX_URL_ENCRYPTED in Netlify)
-    const DUTTYFY_URL = process.env.DUTTYFY_PIX_URL_ENCRYPTED || 'https://www.pagamentos-seguros.app/api-pix/0ysKKO3kjUE6Q7lL55NZp1C0cRveaRdfhhoS2Eksi3jNmp0tTSkDd_JAhJemmunV-4Fo14kc8MpEEOoITNK10w';
+    // Use environment variable for security
+    const DUTTYFY_URL = process.env.DUTTYFY_PIX_URL_ENCRYPTED;
+
+    // Se não tiver URL real da Duttyfy no Netlify, retornar um MOCK (Teste)
+    if (!DUTTYFY_URL) {
+      console.log('Modo Teste: Retornando PIX simulado porque a chave da Duttyfy não está configurada.');
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          transactionId: 'txn_teste_' + Date.now(),
+          pixCode: '00020126580014br.gov.bcb.pix013665377971000109520400005303986540510.005802BR5925Ajuda Solidaria6009Sao Paulo62070503***63041A2B', // Exemplo de payload pix copia e cola
+          qrCodeImage: 'base64...'
+        })
+      };
+    }
 
     const payload = {
       amount: parseInt(amount, 10),
