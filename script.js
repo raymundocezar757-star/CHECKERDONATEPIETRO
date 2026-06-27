@@ -23,7 +23,10 @@
 })();
 
 // --- State Management ---
-        const state = {
+        const extraDonations = Number(localStorage.getItem('extra_donations')) || 0;
+const extraSupporters = Number(localStorage.getItem('extra_supporters')) || 0;
+
+const state = {
             donationType: 'donation', // 'donation' | 'raffle'
             amount: 0,
             customAmount: '',
@@ -31,8 +34,8 @@
             pixKey: '65377971000109',
             stats: {
                 goal: 100000,
-                current: 11391,
-                supporters: 124
+                current: 11391 + extraDonations,
+                supporters: 124 + extraSupporters
             }
         };
 
@@ -99,7 +102,22 @@
             });
         });
 
-        function updateStatsUI() {
+        
+function recordDonation(amount) {
+    if (amount > 0) {
+        const currentExtra = Number(localStorage.getItem('extra_donations')) || 0;
+        const currentSupporters = Number(localStorage.getItem('extra_supporters')) || 0;
+        
+        localStorage.setItem('extra_donations', currentExtra + amount);
+        localStorage.setItem('extra_supporters', currentSupporters + 1);
+        
+        state.stats.current += amount;
+        state.stats.supporters += 1;
+        updateStatsUI();
+    }
+}
+
+function updateStatsUI() {
             // Update Text
             document.getElementById('stats-current').innerText = `R$ ${state.stats.current.toLocaleString('pt-BR')}`;
             document.getElementById('stats-goal').innerText = `R$ ${state.stats.goal.toLocaleString('pt-BR')}`;
@@ -362,12 +380,14 @@
                     
                     // Proceed to success step
                     if(btnId === 'modal-copy-btn') {
+                       recordDonation(state.amount);
                        setModalStep('success');
                     } else {
                        // Open success modal after hero copy
                        state.amount = 0; // Unknown amount
                        state.donationType = 'donation';
                        openModal();
+                       recordDonation(state.amount);
                        setModalStep('success');
                     }
                 }, 1500);
