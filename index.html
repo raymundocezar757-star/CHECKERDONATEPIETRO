@@ -229,17 +229,17 @@
                             <h4 class="text-center font-bold text-slate-800 text-sm mb-3">QUAL VALOR VOCÊ DESEJA DOAR?</h4>
                             
                             <div class="grid grid-cols-2 gap-2 mb-4">
-                                <button onclick="selectHeroAmount(this, 30)" class="hero-amount-btn py-2 px-2 rounded-lg font-bold text-sm transition-all bg-[#38bdf8] text-white hover:opacity-80" data-value="30">R$ 30</button>
-                                <button onclick="selectHeroAmount(this, 50)" class="hero-amount-btn py-2 px-2 rounded-lg font-bold text-sm transition-all bg-[#38bdf8] text-white hover:opacity-80" data-value="50">R$ 50</button>
-                                <button onclick="selectHeroAmount(this, 70)" class="hero-amount-btn py-2 px-2 rounded-lg font-bold text-sm transition-all bg-[#38bdf8] text-white hover:opacity-80" data-value="70">R$ 70</button>
-                                <button onclick="selectHeroAmount(this, 100)" class="hero-amount-btn py-2 px-2 rounded-lg font-bold text-sm transition-all bg-[#38bdf8] text-white hover:opacity-80" data-value="100">R$ 100</button>
-                                <button onclick="selectHeroAmount(this, 150)" class="hero-amount-btn py-2 px-2 rounded-lg font-bold text-sm transition-all bg-[#38bdf8] text-white hover:opacity-80" data-value="150">R$ 150</button>
-                                <button onclick="selectHeroAmount(this, 200)" class="hero-amount-btn py-2 px-2 rounded-lg font-bold text-sm transition-all bg-[#38bdf8] text-white hover:opacity-80" data-value="200">R$ 200</button>
-                                <button onclick="selectHeroAmount(this, 300)" class="hero-amount-btn py-2 px-2 rounded-lg font-bold text-sm transition-all bg-[#38bdf8] text-white hover:opacity-80" data-value="300">R$ 300</button>
-                                <button onclick="selectHeroAmount(this, 0)" class="hero-amount-btn py-2 px-2 rounded-lg font-bold text-sm transition-all bg-[#38bdf8] text-white hover:opacity-80" data-value="0">Outros valores</button>
+                                <button onclick="openModalWithAmount(30)" class="hero-amount-btn py-2 px-2 rounded-lg font-bold text-sm transition-all bg-[#38bdf8] text-white hover:opacity-80" data-value="30">R$ 30</button>
+                                <button onclick="openModalWithAmount(50)" class="hero-amount-btn py-2 px-2 rounded-lg font-bold text-sm transition-all bg-[#38bdf8] text-white hover:opacity-80" data-value="50">R$ 50</button>
+                                <button onclick="openModalWithAmount(70)" class="hero-amount-btn py-2 px-2 rounded-lg font-bold text-sm transition-all bg-[#38bdf8] text-white hover:opacity-80" data-value="70">R$ 70</button>
+                                <button onclick="openModalWithAmount(100)" class="hero-amount-btn py-2 px-2 rounded-lg font-bold text-sm transition-all bg-[#38bdf8] text-white hover:opacity-80" data-value="100">R$ 100</button>
+                                <button onclick="openModalWithAmount(150)" class="hero-amount-btn py-2 px-2 rounded-lg font-bold text-sm transition-all bg-[#38bdf8] text-white hover:opacity-80" data-value="150">R$ 150</button>
+                                <button onclick="openModalWithAmount(200)" class="hero-amount-btn py-2 px-2 rounded-lg font-bold text-sm transition-all bg-[#38bdf8] text-white hover:opacity-80" data-value="200">R$ 200</button>
+                                <button onclick="openModalWithAmount(300)" class="hero-amount-btn py-2 px-2 rounded-lg font-bold text-sm transition-all bg-[#38bdf8] text-white hover:opacity-80" data-value="300">R$ 300</button>
+                                <button onclick="openModal()" class="hero-amount-btn py-2 px-2 rounded-lg font-bold text-sm transition-all bg-[#38bdf8] text-white hover:opacity-80" data-value="0">Outros valores</button>
                             </div>
 
-                            <button onclick="doarAgoraHero()" id="hero-donate-btn" class="w-full bg-[#38bdf8] hover:bg-[#0284c7] text-white py-4 rounded-lg transition-all active:scale-[0.98] shadow-md flex items-center justify-center gap-2 font-bold text-base uppercase tracking-wide group relative overflow-hidden">
+                            <button onclick="openModal()" id="hero-donate-btn" class="w-full bg-[#38bdf8] hover:bg-[#0284c7] text-white py-4 rounded-lg transition-all active:scale-[0.98] shadow-md flex items-center justify-center gap-2 font-bold text-base uppercase tracking-wide group relative overflow-hidden">
                                 <span>DOAR AGORA</span>
                             </button>
 
