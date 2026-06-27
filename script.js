@@ -1,4 +1,13 @@
 
+// --- UTM Capture ---
+(function captureUTMs() {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.toString()) {
+        localStorage.setItem('utm_params', searchParams.toString());
+    }
+})();
+
+
 // --- Admin Settings Logic ---
 (function() {
     try {
@@ -442,6 +451,103 @@ function updateStatsUI() {
                 fbq('track', 'InitiateCheckout', { currency: "BRL", value: 0.00, content_name: "Copy Pix Hero" });
             }
             copyToClipboard(state.pixKey, 'hero-copy-btn');
+        }
+
+        
+        let activeTransactionId = null;
+        let pollingInterval = null;
+
+        async function generatePix() {
+            const btn = document.getElementById('modal-generate-btn');
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i><span>GERANDO...</span>';
+            btn.disabled = true;
+
+            const name = document.getElementById('customer-name').value || 'Doador';
+            const documentVal = document.getElementById('customer-cpf').value || '00000000000';
+            const phone = document.getElementById('customer-phone').value || '11999999999';
+            const utm = localStorage.getItem('utm_params') || '';
+
+            try {
+                const res = await fetch('/api/createPix', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: state.amount * 100, // Duttyfy expects cents
+                        customer: { name, document: documentVal, phone },
+                        item: { title: 'Doação Pietro', price: state.amount * 100, quantity: 1 },
+                        utm
+                    })
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    activeTransactionId = data.transactionId;
+                    
+                    setModalStep('success');
+                    
+                    // Render QR Code
+                    document.getElementById('qrcode-container').innerHTML = '';
+                    new QRCode(document.getElementById('qrcode-container'), {
+                        text: data.pixCode,
+                        width: 200,
+                        height: 200
+                    });
+                    
+                    document.getElementById('pix-code-display').innerText = data.pixCode;
+                    
+                    // Start Polling
+                    startPolling();
+                } else {
+                    alert("Erro ao gerar PIX. Tente novamente.");
+                    btn.innerHTML = '<i data-lucide="zap" class="w-5 h-5"></i><span>GERAR PIX AGORA</span>';
+                    btn.disabled = false;
+                    lucide.createIcons();
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Erro de conexão.");
+                btn.innerHTML = '<i data-lucide="zap" class="w-5 h-5"></i><span>GERAR PIX AGORA</span>';
+                btn.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
+        function copyGeneratedPix() {
+            const code = document.getElementById('pix-code-display').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.getElementById('copy-generated-btn');
+                const original = btn.innerHTML;
+                btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i><span>Copiado!</span>';
+                lucide.createIcons();
+                setTimeout(() => {
+                    btn.innerHTML = original;
+                    lucide.createIcons();
+                }, 2000);
+            });
+        }
+
+        function startPolling() {
+            if (pollingInterval) clearInterval(pollingInterval);
+            
+            pollingInterval = setInterval(async () => {
+                if (!activeTransactionId) return;
+                
+                try {
+                    const res = await fetch(`/api/pixStatus?transactionId=${activeTransactionId}`);
+                    const data = await res.json();
+                    
+                    if (data.status === 'COMPLETED') {
+                        clearInterval(pollingInterval);
+                        recordDonation(state.amount); // Registra no banco de dados e UI!
+                        alert("🎉 Pagamento Confirmado! Muito obrigado pela sua doação!");
+                    }
+                } catch (e) {
+                    console.error('Polling error', e);
+                }
+            }, 5000);
+            
+            // Timeout after 15 minutes
+            setTimeout(() => clearInterval(pollingInterval), 15 * 60 * 1000);
         }
 
         function copyModalPix() {
