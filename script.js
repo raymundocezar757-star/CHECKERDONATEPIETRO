@@ -446,7 +446,41 @@ function updateStatsUI() {
             });
         }
 
-        function copyHeroPix() {
+        
+let heroSelectedAmount = 0;
+
+function selectHeroAmount(btnElement, amount) {
+    heroSelectedAmount = amount;
+    
+    // Reset all buttons style
+    const btns = document.querySelectorAll('.hero-amount-btn');
+    btns.forEach(btn => {
+        btn.classList.remove('ring-4', 'ring-brand-400');
+    });
+    
+    // Highlight selected
+    btnElement.classList.add('ring-4', 'ring-brand-400');
+    
+    if (amount > 0) {
+        state.amount = amount;
+    }
+}
+
+function doarAgoraHero() {
+    if (heroSelectedAmount > 0) {
+        state.amount = heroSelectedAmount;
+        setDonationType('donation'); // Selects simple donation
+        setModalStep('payment'); // Jump straight to payment form
+        document.getElementById('modal-overlay').classList.remove('hidden');
+        document.getElementById('modal-overlay').classList.add('flex');
+    } else {
+        // Just open the modal at the first step
+        openModal();
+    }
+}
+
+
+function copyHeroPix() {
             if (typeof fbq === 'function') {
                 fbq('track', 'InitiateCheckout', { currency: "BRL", value: 0.00, content_name: "Copy Pix Hero" });
             }
