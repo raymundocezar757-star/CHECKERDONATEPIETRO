@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Ajude o Pietro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .nav-link.active { background-color: #1e293b; color: white; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col h-full shrink-0 shadow-xl z-10">
+        <div class="p-6 border-b border-slate-800">
+            <h1 class="text-xl font-bold text-white flex items-center gap-2">
+                <i data-lucide="shield" class="w-6 h-6 text-sky-400"></i>
+                Admin Panel
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">Ajude o Pietro</p>
+        </div>
+
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+            <button onclick="switchTab('tab-dashboard')" id="nav-tab-dashboard" class="nav-link active w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-800 hover:text-white transition-colors text-left">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard
+            </button>
+            <button onclick="switchTab('tab-gateway')" id="nav-tab-gateway" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-800 hover:text-white transition-colors text-left">
+                <i data-lucide="credit-card" class="w-5 h-5"></i> Pagamentos (Cartão/PIX)
+            </button>
+            <button onclick="switchTab('tab-pixel')" id="nav-tab-pixel" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-800 hover:text-white transition-colors text-left">
+                <i data-lucide="facebook" class="w-5 h-5"></i> Pixel do Facebook
+            </button>
+            <button onclick="switchTab('tab-recovery')" id="nav-tab-recovery" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-slate-800 hover:text-white transition-colors text-left">
+                <i data-lucide="message-circle" class="w-5 h-5"></i> Recuperação de Pedidos
+            </button>
+        </nav>
+
+        <div class="p-4 border-t border-slate-800">
+            <a href="index.html" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm transition-colors">
+                <i data-lucide="external-link" class="w-4 h-4"></i> Ver Site
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto bg-slate-50 relative">
+        <!-- Toast Notification -->
+        <div id="toast" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 z-50 flex items-center gap-2">
+            <i data-lucide="check-circle" class="w-5 h-5"></i>
+            <span id="toast-message">Salvo com sucesso!</span>
+        </div>
+
+        <div class="p-8 max-w-5xl mx-auto">
+            
+            <!-- Dashboard Tab -->
+            <div id="tab-dashboard" class="tab-content active space-y-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Visão Geral</h2>
+                    <p class="text-slate-500">Resumo das doações e configurações.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 shrink-0">
+                            <i data-lucide="dollar-sign"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-slate-500 font-medium">Arrecadado</p>
+                            <h3 class="text-2xl font-bold text-slate-800">R$ 11.391,00</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+                            <i data-lucide="users"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-slate-500 font-medium">Apoiadores</p>
+                            <h3 class="text-2xl font-bold text-slate-800">124</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 shrink-0">
+                            <i data-lucide="alert-circle"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-slate-500 font-medium">Pendentes (PIX)</p>
+                            <h3 class="text-2xl font-bold text-slate-800">3</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gateway Tab -->
+            <div id="tab-gateway" class="tab-content space-y-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Gateways de Pagamento</h2>
+                    <p class="text-slate-500">Configure suas chaves de API para processar Cartão de Crédito e gerar PIX dinâmico.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Cartão de Crédito -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-3">
+                            <i data-lucide="credit-card" class="text-slate-500"></i>
+                            <h3 class="font-bold text-slate-800">API Cartão de Crédito</h3>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Gateway Provider</label>
+                                <select id="cc-provider" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+                                    <option value="stripe">Stripe</option>
+                                    <option value="mercadopago">Mercado Pago</option>
+                                    <option value="pagarme">Pagar.me</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Public Key (Client)</label>
+                                <input type="text" id="cc-public-key" placeholder="pk_test_..." class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Secret Key (Server)</label>
+                                <input type="password" id="cc-secret-key" placeholder="sk_test_..." class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono text-sm">
+                            </div>
+                            <button onclick="saveSettings('cc')" class="w-full bg-slate-900 text-white font-medium py-2.5 rounded-lg hover:bg-slate-800 transition-colors">
+                                Salvar Configurações de Cartão
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PIX -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-3">
+                            <div class="w-5 h-5 flex items-center justify-center bg-teal-100 text-teal-600 rounded-full shrink-0">
+                                <i data-lucide="zap" class="w-3 h-3"></i>
+                            </div>
+                            <h3 class="font-bold text-slate-800">API PIX (Geração Dinâmica)</h3>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">PIX Gateway</label>
+                                <select id="pix-provider" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
+                                    <option value="mercadopago">Mercado Pago</option>
+                                    <option value="asaas">Asaas</option>
+                                    <option value="gerencianet">Efí (Gerencianet)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Access Token</label>
+                                <input type="password" id="pix-token" placeholder="APP_USR-..." class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono text-sm">
+                            </div>
+                            <div class="pt-2 border-t border-slate-100">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Ou usar Chave PIX Estática (Site Atual)</label>
+                                <input type="text" id="pix-static-key" value="65377971000109" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono text-sm">
+                            </div>
+                            <button onclick="saveSettings('pix')" class="w-full bg-teal-600 text-white font-medium py-2.5 rounded-lg hover:bg-teal-700 transition-colors mt-2">
+                                Salvar Configurações PIX
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pixel Tab -->
+            <div id="tab-pixel" class="tab-content space-y-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Pixel do Facebook</h2>
+                    <p class="text-slate-500">Rastreie conversões e page views injetando o Pixel ID no site.</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 max-w-2xl">
+                    <div class="p-6 space-y-6">
+                        <div class="flex items-start gap-4 p-4 bg-blue-50 text-blue-800 rounded-lg border border-blue-100">
+                            <i data-lucide="info" class="w-5 h-5 shrink-0 mt-0.5"></i>
+                            <p class="text-sm">Seu Pixel ID será injetado automaticamente na tag <code>&lt;head&gt;</code> do site, rastreando eventos como <strong>PageView</strong> e <strong>Purchase</strong> quando uma doação for concluída.</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Facebook Pixel ID</label>
+                            <input type="text" id="pixel-id" placeholder="Ex: 619345180649856" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono text-lg shadow-inner">
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="pixel-active" class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                            <label for="pixel-active" class="text-slate-700 font-medium">Ativar rastreamento no site</label>
+                        </div>
+
+                        <button onclick="saveSettings('pixel')" class="bg-blue-600 text-white font-medium px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                            <i data-lucide="save" class="w-4 h-4"></i> Salvar Pixel
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recovery Tab -->
+            <div id="tab-recovery" class="tab-content space-y-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Recuperação de Pedidos</h2>
+                    <p class="text-slate-500">Envie a chave PIX ou lembretes via WhatsApp para doadores que geraram PIX mas não pagaram.</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-50 border-b border-slate-200 text-slate-700">
+                            <tr>
+                                <th class="px-6 py-4 font-semibold">Nome</th>
+                                <th class="px-6 py-4 font-semibold">Telefone</th>
+                                <th class="px-6 py-4 font-semibold">Valor</th>
+                                <th class="px-6 py-4 font-semibold">Status</th>
+                                <th class="px-6 py-4 font-semibold text-right">Ação (WhatsApp)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recovery-table" class="divide-y divide-slate-100">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="admin.js"></script>
+</body>
+</html>
