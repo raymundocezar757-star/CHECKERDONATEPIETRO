@@ -538,7 +538,7 @@ function copyHeroPix() {
                     
                     // Start Polling
                     startPolling();
- else {
+                } else {
                     alert("Erro ao gerar PIX. Tente novamente.");
                     btn.innerHTML = '<i data-lucide="zap" class="w-5 h-5"></i><span>GERAR PIX AGORA</span>';
                     btn.disabled = false;
