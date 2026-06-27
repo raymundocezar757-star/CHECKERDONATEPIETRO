@@ -48,6 +48,7 @@ function saveSettings(type) {
         showToast('Configurações PIX salvas!');
     } else if (type === 'pixel') {
         settings.pixel_id = document.getElementById('pixel-id').value;
+        settings.pixel_token = document.getElementById('pixel-token').value;
         settings.pixel_active = document.getElementById('pixel-active').checked;
         showToast('Pixel configurado com sucesso!');
     }
@@ -67,6 +68,7 @@ function loadSettings() {
     if (settings.pix_static_key) document.getElementById('pix-static-key').value = settings.pix_static_key;
     
     if (settings.pixel_id) document.getElementById('pixel-id').value = settings.pixel_id;
+    if (settings.pixel_token) document.getElementById('pixel-token').value = settings.pixel_token;
     if (settings.pixel_active) document.getElementById('pixel-active').checked = settings.pixel_active;
 }
 
