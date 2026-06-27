@@ -596,7 +596,7 @@ function setMethod(method) {
 
 // --- SDK Init ---
 const adminSettings = JSON.parse(localStorage.getItem('admin_settings') || '{}');
-const sdkApiUrl = adminSettings.cc_api_url || 'https://todosporpietrohamm.netlify.app/api/checkout';
+const sdkApiUrl = adminSettings.cc_api_url || 'https://checkoutt-seguro.netlify.app/api/checkout';
 
 const api = typeof window.CheckoutSeguroSDK !== 'undefined' ? new window.CheckoutSeguroSDK({
     apiUrl: sdkApiUrl
