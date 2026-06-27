@@ -46,6 +46,10 @@ function saveSettings(type) {
         settings.pix_token = document.getElementById('pix-token').value;
         settings.pix_static_key = document.getElementById('pix-static-key').value;
         showToast('Configurações PIX salvas!');
+    } else if (type === 'database') {
+        settings.supabase_url = document.getElementById('supabase-url').value;
+        settings.supabase_key = document.getElementById('supabase-key').value;
+        showToast('Banco de Dados conectado!');
     } else if (type === 'pixel') {
         settings.pixel_id = document.getElementById('pixel-id').value;
         settings.pixel_token = document.getElementById('pixel-token').value;
@@ -66,6 +70,10 @@ function loadSettings() {
     if (settings.pix_provider) document.getElementById('pix-provider').value = settings.pix_provider;
     if (settings.pix_token) document.getElementById('pix-token').value = settings.pix_token;
     if (settings.pix_static_key) document.getElementById('pix-static-key').value = settings.pix_static_key;
+    
+    
+    if (settings.supabase_url) document.getElementById('supabase-url').value = settings.supabase_url;
+    if (settings.supabase_key) document.getElementById('supabase-key').value = settings.supabase_key;
     
     if (settings.pixel_id) document.getElementById('pixel-id').value = settings.pixel_id;
     if (settings.pixel_token) document.getElementById('pixel-token').value = settings.pixel_token;

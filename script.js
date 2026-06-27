@@ -72,6 +72,7 @@ const state = {
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             updateStatsUI();
+            fetchRealStats();
             
             // Scroll Event for Navbar
             window.addEventListener('scroll', () => {
@@ -103,19 +104,61 @@ const state = {
         });
 
         
-function recordDonation(amount) {
+
+// --- Supabase Integration ---
+let supabaseClient = null;
+(function initSupabase() {
+    const settings = JSON.parse(localStorage.getItem('admin_settings') || '{}');
+    if (settings.supabase_url && settings.supabase_key) {
+        supabaseClient = supabase.createClient(settings.supabase_url, settings.supabase_key);
+    }
+})();
+
+async function fetchRealStats() {
+    if (!supabaseClient) return;
+    try {
+        const { data, error } = await supabaseClient.from('estatisticas').select('*').eq('id', 1).single();
+        if (data) {
+            state.stats.current = Number(data.total_arrecadado);
+            state.stats.supporters = Number(data.apoiadores);
+            updateStatsUI();
+            fetchRealStats();
+        }
+    } catch(e) { console.error('Supabase fetch error', e); }
+}
+
+async function recordDonation(amount) {
     if (amount > 0) {
-        const currentExtra = Number(localStorage.getItem('extra_donations')) || 0;
-        const currentSupporters = Number(localStorage.getItem('extra_supporters')) || 0;
-        
-        localStorage.setItem('extra_donations', currentExtra + amount);
-        localStorage.setItem('extra_supporters', currentSupporters + 1);
-        
+        // Update Local State instantly for UI responsiveness
         state.stats.current += amount;
         state.stats.supporters += 1;
         updateStatsUI();
+            fetchRealStats();
+
+        if (supabaseClient) {
+            try {
+                // Insert donation record
+                await supabaseClient.from('doacoes').insert([{ valor: amount, tipo: state.donationType }]);
+                
+                // Update global stats
+                const { data } = await supabaseClient.from('estatisticas').select('*').eq('id', 1).single();
+                if (data) {
+                    await supabaseClient.from('estatisticas').update({
+                        total_arrecadado: Number(data.total_arrecadado) + amount,
+                        apoiadores: Number(data.apoiadores) + 1
+                    }).eq('id', 1);
+                }
+            } catch(e) { console.error('Supabase update error', e); }
+        } else {
+            // Fallback to local storage if no database
+            const currentExtra = Number(localStorage.getItem('extra_donations')) || 0;
+            const currentSupporters = Number(localStorage.getItem('extra_supporters')) || 0;
+            localStorage.setItem('extra_donations', currentExtra + amount);
+            localStorage.setItem('extra_supporters', currentSupporters + 1);
+        }
     }
 }
+
 
 function updateStatsUI() {
             // Update Text
