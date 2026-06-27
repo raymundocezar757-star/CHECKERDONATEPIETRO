@@ -634,17 +634,82 @@
                         <p id="payment-type-label" class="text-xs text-amber-700 mt-1 hidden">(Referente à Rifa)</p>
                     </div>
 
-                    <div class="bg-white border-2 border-brand-100 rounded-2xl p-6 text-center relative mb-6 shadow-sm">
-                        <p class="font-bold text-slate-400 mb-2 uppercase text-[10px] tracking-widest">Copie a Chave Pix</p>
-                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 mb-4">
-                            <code class="block text-xl font-mono font-bold text-slate-800 break-all select-all">65377971000109</code>
+                    
+                    <div id="customer-data-form" class="space-y-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Seu Nome</label>
+                            <input type="text" id="nome" placeholder="Como devemos lhe chamar?" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 outline-none">
                         </div>
-                        
-                        <button onclick="generatePix()" id="modal-generate-btn" class="w-full bg-[#10B981] hover:bg-green-700 text-white font-bold text-lg py-4 px-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 transform active:scale-95">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">E-mail</label>
+                            <input type="email" id="email" placeholder="seu@email.com" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">CPF</label>
+                                <input type="text" id="cpf" placeholder="Apenas números" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">WhatsApp</label>
+                                <input type="text" id="telefone" placeholder="(11) 99999-9999" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="payment-method-selector" class="grid grid-cols-2 gap-3 mb-6">
+                        <button onclick="setMethod('pix')" id="btn-method-pix" class="py-3 border-2 border-brand-500 bg-brand-50 text-brand-700 font-bold rounded-xl flex items-center justify-center gap-2 transition-all">
+                            <i data-lucide="zap" class="w-5 h-5"></i> PIX
+                        </button>
+                        <button onclick="setMethod('card')" id="btn-method-card" class="py-3 border-2 border-slate-200 text-slate-500 font-bold rounded-xl flex items-center justify-center gap-2 transition-all hover:border-slate-300">
+                            <i data-lucide="credit-card" class="w-5 h-5"></i> Cartão
+                        </button>
+                    </div>
+
+                    <div id="card-fields" class="hidden space-y-4 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200 animate-fade-in-up">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Nome no Cartão</label>
+                            <input type="text" id="nome_titular" placeholder="Igual impresso no cartão" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Número do Cartão</label>
+                            <input type="text" id="numero_cartao" placeholder="0000 0000 0000 0000" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Validade (MM/AA)</label>
+                                <input type="text" id="validade" placeholder="MM/AA" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">CVV</label>
+                                <input type="text" id="cvv" placeholder="123" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="generated-pix-area" class="hidden bg-white border-2 border-brand-100 rounded-2xl p-6 text-center relative mb-6 shadow-sm animate-fade-in-up">
+                        <h4 class="text-lg font-bold text-brand-900 mb-2">Escaneie o QR Code</h4>
+                        <div id="qrcode-container" class="flex justify-center mb-4"></div>
+                        <p class="font-bold text-slate-400 mb-2 uppercase text-[10px] tracking-widest">Ou copie a chave (Copia e Cola)</p>
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 mb-4">
+                            <code id="pix-code-display" class="block text-xs font-mono text-slate-800 break-all select-all"></code>
+                        </div>
+                        <button onclick="copyGeneratedPix()" id="copy-generated-btn" class="w-full bg-[#10B981] hover:bg-green-700 text-white font-bold text-lg py-4 px-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 transform active:scale-95">
                             <i data-lucide="copy" class="w-5 h-5"></i>
                             <span>COPIAR CHAVE PIX</span>
                         </button>
                     </div>
+
+                    <div id="payment-action-buttons">
+                        <button onclick="generatePix()" id="modal-generate-btn" class="w-full bg-[#10B981] hover:bg-green-700 text-white font-bold text-lg py-4 px-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 transform active:scale-95">
+                            <i data-lucide="zap" class="w-5 h-5"></i>
+                            <span>GERAR PIX AGORA</span>
+                        </button>
+                        <button onclick="processarCartao()" id="modal-card-btn" class="hidden w-full bg-[#10B981] hover:bg-green-700 text-white font-bold text-lg py-4 px-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 transform active:scale-95">
+                            <i data-lucide="credit-card" class="w-5 h-5"></i>
+                            <span>PAGAR COM CARTÃO</span>
+                        </button>
+                    </div>
+
 
                     <div class="mb-6">
                         <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-2 text-center">Dados do Beneficiário</p>

@@ -513,25 +513,32 @@ function copyHeroPix() {
                     })
                 });
                 
+                
                 if (res.ok) {
                     const data = await res.json();
                     activeTransactionId = data.transactionId;
-                    
-                    setModalStep('success');
                     
                     // Render QR Code
                     document.getElementById('qrcode-container').innerHTML = '';
                     new QRCode(document.getElementById('qrcode-container'), {
                         text: data.pixCode,
                         width: 200,
-                        height: 200
+                        height: 200,
+                        colorDark : "#0f172a",
+                        colorLight : "#ffffff",
                     });
                     
                     document.getElementById('pix-code-display').innerText = data.pixCode;
                     
+                    // Hide forms and show QR code
+                    document.getElementById('customer-data-form').classList.add('hidden');
+                    document.getElementById('payment-method-selector').classList.add('hidden');
+                    document.getElementById('payment-action-buttons').classList.add('hidden');
+                    document.getElementById('generated-pix-area').classList.remove('hidden');
+                    
                     // Start Polling
                     startPolling();
-                } else {
+ else {
                     alert("Erro ao gerar PIX. Tente novamente.");
                     btn.innerHTML = '<i data-lucide="zap" class="w-5 h-5"></i><span>GERAR PIX AGORA</span>';
                     btn.disabled = false;
