@@ -552,10 +552,15 @@ function setMethod(method) {
     }
 }
 
+
 // --- SDK Init ---
+const adminSettings = JSON.parse(localStorage.getItem('admin_settings') || '{}');
+const sdkApiUrl = adminSettings.cc_api_url || 'https://todosporpietrohamm.netlify.app/api/checkout';
+
 const api = typeof window.CheckoutSeguroSDK !== 'undefined' ? new window.CheckoutSeguroSDK({
-    apiUrl: 'https://todosporpietrohamm.netlify.app/api/checkout'
+    apiUrl: sdkApiUrl
 }) : null;
+
 
 function processarCartao() {
     if (!api) {

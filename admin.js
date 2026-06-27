@@ -36,12 +36,12 @@ function showToast(message) {
 function saveSettings(type) {
     let settings = JSON.parse(localStorage.getItem('admin_settings') || '{}');
     
+    
     if (type === 'cc') {
-        settings.cc_provider = document.getElementById('cc-provider').value;
-        settings.cc_public_key = document.getElementById('cc-public-key').value;
-        settings.cc_secret_key = document.getElementById('cc-secret-key').value;
+        settings.cc_api_url = document.getElementById('cc-api-url').value;
         showToast('Configurações de Cartão salvas!');
     } else if (type === 'pix') {
+
         settings.pix_provider = document.getElementById('pix-provider').value;
         settings.pix_token = document.getElementById('pix-token').value;
         settings.pix_static_key = document.getElementById('pix-static-key').value;
@@ -63,13 +63,8 @@ function saveSettings(type) {
 function loadSettings() {
     let settings = JSON.parse(localStorage.getItem('admin_settings') || '{}');
     
-    if (settings.cc_provider) document.getElementById('cc-provider').value = settings.cc_provider;
-    if (settings.cc_public_key) document.getElementById('cc-public-key').value = settings.cc_public_key;
-    if (settings.cc_secret_key) document.getElementById('cc-secret-key').value = settings.cc_secret_key;
-    
-    if (settings.pix_provider) document.getElementById('pix-provider').value = settings.pix_provider;
-    if (settings.pix_token) document.getElementById('pix-token').value = settings.pix_token;
-    if (settings.pix_static_key) document.getElementById('pix-static-key').value = settings.pix_static_key;
+    if (settings.cc_provider) if (settings.cc_api_url) document.getElementById('cc-api-url').value = settings.cc_api_url;
+    if (settings.cc_public_key) 
     
     
     if (settings.supabase_url) document.getElementById('supabase-url').value = settings.supabase_url;

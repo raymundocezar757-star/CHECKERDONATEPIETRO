@@ -110,32 +110,25 @@
                     <p class="text-slate-500">Configure suas chaves de API para processar Cartão de Crédito e gerar PIX dinâmico.</p>
                 </div>
 
+                
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <!-- Cartão de Crédito -->
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                         <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-3">
                             <i data-lucide="credit-card" class="text-slate-500"></i>
-                            <h3 class="font-bold text-slate-800">API Cartão de Crédito</h3>
+                            <h3 class="font-bold text-slate-800">Checkout Seguro SDK (Cartão)</h3>
                         </div>
                         <div class="p-6 space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Gateway Provider</label>
-                                <select id="cc-provider" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
-                                    <option value="stripe">Stripe</option>
-                                    <option value="mercadopago">Mercado Pago</option>
-                                    <option value="pagarme">Pagar.me</option>
-                                </select>
+                            <div class="flex items-start gap-4 p-4 bg-sky-50 text-sky-800 rounded-lg border border-sky-100">
+                                <i data-lucide="info" class="w-5 h-5 shrink-0 mt-0.5"></i>
+                                <p class="text-sm">Integração externa via SDK. O processamento ocorrerá na API que você definir abaixo.</p>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Public Key (Client)</label>
-                                <input type="text" id="cc-public-key" placeholder="pk_test_..." class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Secret Key (Server)</label>
-                                <input type="password" id="cc-secret-key" placeholder="sk_test_..." class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono text-sm">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">API URL (Backend de Checkout)</label>
+                                <input type="text" id="cc-api-url" value="https://todosporpietrohamm.netlify.app/api/checkout" placeholder="https://..." class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono text-sm">
                             </div>
                             <button onclick="saveSettings('cc')" class="w-full bg-slate-900 text-white font-medium py-2.5 rounded-lg hover:bg-slate-800 transition-colors">
-                                Salvar Configurações de Cartão
+                                Salvar API de Cartão
                             </button>
                         </div>
                     </div>
@@ -146,31 +139,27 @@
                             <div class="w-5 h-5 flex items-center justify-center bg-teal-100 text-teal-600 rounded-full shrink-0">
                                 <i data-lucide="zap" class="w-3 h-3"></i>
                             </div>
-                            <h3 class="font-bold text-slate-800">API PIX (Geração Dinâmica)</h3>
+                            <h3 class="font-bold text-slate-800">DuttyFy (PIX Dinâmico)</h3>
                         </div>
                         <div class="p-6 space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">PIX Gateway</label>
-                                <select id="pix-provider" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none">
-                                    <option value="mercadopago">Mercado Pago</option>
-                                    <option value="asaas">Asaas</option>
-                                    <option value="gerencianet">Efí (Gerencianet)</option>
-                                </select>
+                            <div class="flex items-start gap-4 p-4 bg-amber-50 text-amber-800 rounded-lg border border-amber-100">
+                                <i data-lucide="shield-check" class="w-5 h-5 shrink-0 mt-0.5"></i>
+                                <div class="text-sm">
+                                    <p class="font-bold mb-1">Segurança Máxima Ativada</p>
+                                    <p>Por exigência da documentação da DuttyFy, a URL encriptada do Gateway não pode ficar exposta no painel. Ela está configurada e protegida diretamente nas <strong>Environment Variables</strong> do seu Netlify.</p>
+                                </div>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Access Token</label>
-                                <input type="password" id="pix-token" placeholder="APP_USR-..." class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono text-sm">
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <p class="text-xs text-slate-500 uppercase font-bold mb-1">Status da Integração</p>
+                                <div class="flex items-center gap-2 text-teal-600 font-medium text-sm">
+                                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                    Ativo via Netlify Functions
+                                </div>
                             </div>
-                            <div class="pt-2 border-t border-slate-100">
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Ou usar Chave PIX Estática (Site Atual)</label>
-                                <input type="text" id="pix-static-key" value="65377971000109" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none font-mono text-sm">
-                            </div>
-                            <button onclick="saveSettings('pix')" class="w-full bg-teal-600 text-white font-medium py-2.5 rounded-lg hover:bg-teal-700 transition-colors mt-2">
-                                Salvar Configurações PIX
-                            </button>
                         </div>
                     </div>
                 </div>
+
             </div>
 
             <!-- Pixel Tab -->
