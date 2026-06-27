@@ -40,8 +40,6 @@ exports.handler = async (event, context) => {
       utm: utm || ''
     };
 
-    const fetch = (await import('node-fetch')).default;
-    
     // Call Duttyfy API
     const response = await fetch(DUTTYFY_URL, {
       method: 'POST',
