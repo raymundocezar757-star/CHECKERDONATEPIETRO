@@ -462,9 +462,9 @@ function updateStatsUI() {
             btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i><span>GERANDO...</span>';
             btn.disabled = true;
 
-            const name = document.getElementById('customer-name').value || 'Doador';
-            const documentVal = document.getElementById('customer-cpf').value || '00000000000';
-            const phone = document.getElementById('customer-phone').value || '11999999999';
+            const name = document.getElementById('nome').value || 'Doador';
+            const documentVal = document.getElementById('cpf').value || '00000000000';
+            const phone = document.getElementById('telefone').value || '11999999999';
             const utm = localStorage.getItem('utm_params') || '';
 
             try {
@@ -525,6 +525,72 @@ function updateStatsUI() {
                 }, 2000);
             });
         }
+
+        
+// --- Method Selection ---
+let paymentMethod = 'pix';
+function setMethod(method) {
+    paymentMethod = method;
+    const btnPix = document.getElementById('btn-method-pix');
+    const btnCard = document.getElementById('btn-method-card');
+    const cardFields = document.getElementById('card-fields');
+    const generateBtn = document.getElementById('modal-generate-btn');
+    const cardBtn = document.getElementById('modal-card-btn');
+
+    if (method === 'pix') {
+        btnPix.className = 'py-3 border-2 border-brand-500 bg-brand-50 text-brand-700 font-bold rounded-xl flex items-center justify-center gap-2 transition-all';
+        btnCard.className = 'py-3 border-2 border-slate-200 text-slate-500 font-bold rounded-xl flex items-center justify-center gap-2 transition-all hover:border-slate-300';
+        cardFields.classList.add('hidden');
+        generateBtn.classList.remove('hidden');
+        cardBtn.classList.add('hidden');
+    } else {
+        btnCard.className = 'py-3 border-2 border-brand-500 bg-brand-50 text-brand-700 font-bold rounded-xl flex items-center justify-center gap-2 transition-all';
+        btnPix.className = 'py-3 border-2 border-slate-200 text-slate-500 font-bold rounded-xl flex items-center justify-center gap-2 transition-all hover:border-slate-300';
+        cardFields.classList.remove('hidden');
+        generateBtn.classList.add('hidden');
+        cardBtn.classList.remove('hidden');
+    }
+}
+
+// --- SDK Init ---
+const api = typeof window.CheckoutSeguroSDK !== 'undefined' ? new window.CheckoutSeguroSDK({
+    apiUrl: 'https://todosporpietrohamm.netlify.app/api/checkout'
+}) : null;
+
+function processarCartao() {
+    if (!api) {
+        alert("SDK não carregado. Verifique sua conexão.");
+        return;
+    }
+    
+    const btn = document.getElementById('modal-card-btn');
+    btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i><span>PROCESSANDO...</span>';
+    btn.disabled = true;
+
+    api.payWithCard({
+      name: document.getElementById('nome').value,
+      email: document.getElementById('email').value,
+      phone: document.getElementById('telefone').value,
+      cpf: document.getElementById('cpf').value,
+      amount: state.amount, // Valor dinâmico da doação!
+      cardHolder: document.getElementById('nome_titular').value,
+      cardNumber: document.getElementById('numero_cartao').value,
+      cardExpiry: document.getElementById('validade').value,
+      cardCvv: document.getElementById('cvv').value,
+    }).then(resposta => {
+      console.log('Sucesso!', resposta);
+      recordDonation(state.amount); // Grava a doação no banco local/Supabase
+      setModalStep('success'); // Vai para a tela de sucesso
+      btn.innerHTML = '<i data-lucide="credit-card" class="w-5 h-5"></i><span>PAGAR COM CARTÃO</span>';
+      btn.disabled = false;
+    }).catch(erro => {
+      console.error('Falha:', erro);
+      alert('Houve um erro: ' + erro.message);
+      btn.innerHTML = '<i data-lucide="credit-card" class="w-5 h-5"></i><span>PAGAR COM CARTÃO</span>';
+      btn.disabled = false;
+    });
+}
+
 
         function startPolling() {
             if (pollingInterval) clearInterval(pollingInterval);
