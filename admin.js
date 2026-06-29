@@ -63,9 +63,7 @@ function saveSettings(type) {
 function loadSettings() {
     let settings = JSON.parse(localStorage.getItem('admin_settings') || '{}');
     
-    if (settings.cc_provider) if (settings.cc_api_url) document.getElementById('cc-api-url').value = settings.cc_api_url;
-    if (settings.cc_public_key) 
-    
+    if (settings.cc_api_url) document.getElementById('cc-api-url').value = settings.cc_api_url;
     
     if (settings.supabase_url) document.getElementById('supabase-url').value = settings.supabase_url;
     if (settings.supabase_key) document.getElementById('supabase-key').value = settings.supabase_key;
