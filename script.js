@@ -542,7 +542,7 @@ function copyHeroPix() {
                     // Registra o pedido como Pendente no Supabase para Recuperação
                     if (supabaseClient) {
                         try {
-                            await supabaseClient.from('pedidos').insert([{
+                            const { data, error: sbError } = await supabaseClient.from('pedidos').insert([{
                                 nome: name,
                                 email: document.getElementById('email').value || '',
                                 telefone: phone,
@@ -552,7 +552,17 @@ function copyHeroPix() {
                                 status: 'Pendente',
                                 transaction_id: activeTransactionId
                             }]);
+                            
+                            if (sbError) {
+                                console.error("Supabase Insert Error:", sbError);
+                                alert("Erro interno (Supabase): " + sbError.message);
+                            } else {
+                                console.log("Pedido salvo com sucesso no Supabase!");
+                            }
                         } catch(e) { console.error('Erro ao salvar pedido no supabase', e); }
+                    } else {
+                        console.error('SupabaseClient is null on checkout!');
+                        alert("Atenção: Supabase não está configurado neste navegador. O pedido não foi salvo no Admin.");
                     }
                 } else {
                     alert("Erro ao gerar PIX. Tente novamente.");
