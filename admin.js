@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
     loadSettings();
-    loadFakeRecoveryData();
+    loadRecoveryData();
 });
 
 function switchTab(tabId) {
@@ -73,43 +73,69 @@ function loadSettings() {
     if (settings.pixel_active) document.getElementById('pixel-active').checked = settings.pixel_active;
 }
 
-// Generate some fake data for the recovery tab
-const fakeOrders = [
-    { id: 1, name: 'João Silva', phone: '5511999999999', amount: 50.00, date: 'Hoje', status: 'Pendente' },
-    { id: 2, name: 'Maria Oliveira', phone: '5511988888888', amount: 100.00, date: 'Ontem', status: 'Pendente' },
-    { id: 3, name: 'Carlos Santos', phone: '5511977777777', amount: 25.00, date: '2 dias atrás', status: 'Expirado' }
-];
-
-function loadFakeRecoveryData() {
+async function loadRecoveryData() {
+    const settings = JSON.parse(localStorage.getItem('admin_settings') || '{}');
     const tbody = document.getElementById('recovery-table');
-    tbody.innerHTML = '';
     
-    fakeOrders.forEach(order => {
-        const tr = document.createElement('tr');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4">Carregando pedidos...</td></tr>';
+    
+    if (!settings.supabase_url || !settings.supabase_key) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-slate-500">Supabase não configurado. Adicione a chave na aba Banco de Dados.</td></tr>';
+        return;
+    }
+
+    try {
+        const supabaseClient = supabase.createClient(settings.supabase_url, settings.supabase_key);
+        const { data: orders, error } = await supabaseClient.from('pedidos').select('*').order('created_at', { ascending: false }).limit(50);
         
-        let statusBadge = '';
-        if (order.status === 'Pendente') {
-            statusBadge = '<span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full font-medium">PIX Pendente</span>';
-        } else {
-            statusBadge = '<span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full font-medium">PIX Expirado</span>';
+        if (error) throw error;
+        
+        tbody.innerHTML = '';
+        if (!orders || orders.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-slate-500">Nenhum pedido encontrado.</td></tr>';
+            return;
         }
 
-        const msg = encodeURIComponent(`Olá ${order.name}, vimos que você gerou um PIX de R$ ${order.amount.toFixed(2)} para ajudar o Pietro mas o pagamento ainda não foi concluído. Podemos te ajudar com algo? A chave PIX é: 65377971000109`);
-        const waLink = `https://wa.me/${order.phone}?text=${msg}`;
+        orders.forEach(order => {
+            const tr = document.createElement('tr');
+            
+            let statusBadge = '';
+            if (order.status === 'Pendente') {
+                statusBadge = '<span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full font-medium">PIX Pendente</span>';
+            } else if (order.status === 'COMPLETED' || order.status === 'Pago') {
+                statusBadge = '<span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium">Pago</span>';
+            } else {
+                statusBadge = '<span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full font-medium">PIX Expirado</span>';
+            }
 
-        tr.innerHTML = `
-            <td class="px-6 py-4 font-medium text-slate-800">${order.name}</td>
-            <td class="px-6 py-4">${order.phone}</td>
-            <td class="px-6 py-4 font-medium">R$ ${order.amount.toFixed(2)}</td>
-            <td class="px-6 py-4">${statusBadge}</td>
-            <td class="px-6 py-4 text-right">
-                <a href="${waLink}" target="_blank" class="inline-flex items-center gap-2 px-3 py-1.5 bg-[#25D366] text-white hover:bg-[#20b858] rounded-lg text-sm font-medium transition-colors">
-                    <i data-lucide="message-circle" class="w-4 h-4"></i> Recuperar
-                </a>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
-    
-    lucide.createIcons();
+            const amount = Number(order.valor) || 0;
+            const msg = encodeURIComponent(`Olá ${order.nome || 'Amigo(a)'}, vimos que você tentou fazer uma doação de R$ ${amount.toFixed(2)} para ajudar o Pietro mas o pagamento ainda não foi concluído. Podemos te ajudar com algo?`);
+            
+            // Format phone to just numbers for whatsapp link
+            let rawPhone = (order.telefone || '').replace(/\D/g, '');
+            if (rawPhone && !rawPhone.startsWith('55') && rawPhone.length <= 11) {
+                rawPhone = '55' + rawPhone;
+            }
+            const waLink = rawPhone ? `https://wa.me/${rawPhone}?text=${msg}` : '#';
+
+            tr.innerHTML = `
+                <td class="px-6 py-4 font-medium text-slate-800">${order.nome || '-'}</td>
+                <td class="px-6 py-4">${order.telefone || '-'}</td>
+                <td class="px-6 py-4 font-medium">R$ ${amount.toFixed(2)}</td>
+                <td class="px-6 py-4">${statusBadge}</td>
+                <td class="px-6 py-4 text-right">
+                    <a href="${waLink}" target="_blank" class="inline-flex items-center gap-2 px-3 py-1.5 bg-[#25D366] text-white hover:bg-[#20b858] rounded-lg text-sm font-medium transition-colors ${!rawPhone ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}">
+                        <i data-lucide="message-circle" class="w-4 h-4"></i> Recuperar
+                    </a>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+        
+        lucide.createIcons();
+    } catch(err) {
+        console.error(err);
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-red-500">Erro ao carregar banco (A tabela "pedidos" existe no Supabase?)</td></tr>';
+    }
 }

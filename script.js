@@ -538,6 +538,22 @@ function copyHeroPix() {
                     
                     // Start Polling
                     startPolling();
+
+                    // Registra o pedido como Pendente no Supabase para Recuperação
+                    if (supabaseClient) {
+                        try {
+                            await supabaseClient.from('pedidos').insert([{
+                                nome: name,
+                                email: document.getElementById('email').value || '',
+                                telefone: phone,
+                                cpf: documentVal,
+                                valor: state.amount,
+                                metodo: 'PIX',
+                                status: 'Pendente',
+                                transaction_id: activeTransactionId
+                            }]);
+                        } catch(e) { console.error('Erro ao salvar pedido no supabase', e); }
+                    }
                 } else {
                     alert("Erro ao gerar PIX. Tente novamente.");
                     btn.innerHTML = '<i data-lucide="zap" class="w-5 h-5"></i><span>GERAR PIX AGORA</span>';
