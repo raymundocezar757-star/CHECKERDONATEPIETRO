@@ -539,6 +539,11 @@ function copyHeroPix() {
                     document.getElementById('payment-action-buttons').classList.add('hidden');
                     document.getElementById('generated-pix-area').classList.remove('hidden');
                     
+                    // Pixel Purchase on PIX Generate
+                    if (typeof fbq === 'function') {
+                        fbq('track', 'Purchase', { currency: 'BRL', value: state.amount, content_name: 'PIX Gerado' });
+                    }
+                    
                     // Start Polling
                     startPolling();
 
@@ -654,6 +659,12 @@ function processarCartao() {
       cardCvv: document.getElementById('cvv').value,
     }).then(resposta => {
       console.log('Sucesso!', resposta);
+      
+      // Pixel Purchase on CC Success
+      if (typeof fbq === 'function') {
+          fbq('track', 'Purchase', { currency: 'BRL', value: state.amount, content_name: 'Cartão Aprovado' });
+      }
+
       recordDonation(state.amount); // Grava a doação no banco local/Supabase
       setModalStep('success'); // Vai para a tela de sucesso
       btn.innerHTML = '<i data-lucide="credit-card" class="w-5 h-5"></i><span>PAGAR COM CARTÃO</span>';
