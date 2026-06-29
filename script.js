@@ -117,9 +117,12 @@ const state = {
 // --- Supabase Integration ---
 let supabaseClient = null;
 (function initSupabase() {
-    const settings = JSON.parse(localStorage.getItem('admin_settings') || '{}');
-    if (settings.supabase_url && settings.supabase_key) {
-        supabaseClient = supabase.createClient(settings.supabase_url, settings.supabase_key);
+    // Usamos as chaves fixas para que qualquer doador (no celular ou PC) consiga salvar o pedido
+    const SUPABASE_URL = 'https://rlygwgykgptmeyhyudqz.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_QVZOmb1sfSS0UMlF7M_F_A_G3R4U4JA';
+    
+    if (SUPABASE_URL && SUPABASE_KEY) {
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
 })();
 

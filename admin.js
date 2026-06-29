@@ -74,19 +74,16 @@ function loadSettings() {
 }
 
 async function loadRecoveryData() {
-    const settings = JSON.parse(localStorage.getItem('admin_settings') || '{}');
     const tbody = document.getElementById('recovery-table');
     
     if (!tbody) return;
     tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4">Carregando pedidos...</td></tr>';
     
-    if (!settings.supabase_url || !settings.supabase_key) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-slate-500">Supabase não configurado. Adicione a chave na aba Banco de Dados.</td></tr>';
-        return;
-    }
+    const SUPABASE_URL = 'https://rlygwgykgptmeyhyudqz.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_QVZOmb1sfSS0UMlF7M_F_A_G3R4U4JA';
 
     try {
-        const supabaseClient = supabase.createClient(settings.supabase_url, settings.supabase_key);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         const { data: orders, error } = await supabaseClient.from('pedidos').select('*').order('created_at', { ascending: false }).limit(50);
         
         if (error) throw error;
