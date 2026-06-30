@@ -134,6 +134,11 @@ let supabaseClient = null;
                 });
             }
         });
+        
+        // Register visit
+        supabaseClient.from('acessos').insert([{ user_agent: navigator.userAgent }]).then(()=>{
+            // Silent success
+        }).catch(e => console.error("Acesso não registrado", e));
     }
 })();
 

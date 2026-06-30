@@ -30,6 +30,33 @@ function initPresence() {
             countEl.innerText = displayCount;
         }
     }).subscribe();
+
+    // Fetch initial Total Visits
+    fetchTotalVisits();
+
+    // Subscribe to new visits in realtime
+    adminSupabaseClient.channel('acessos_realtime')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'acessos' }, payload => {
+            const el = document.getElementById('total-visits');
+            if (el) {
+                el.innerText = parseInt(el.innerText) + 1;
+            }
+        }).subscribe();
+}
+
+async function fetchTotalVisits() {
+    try {
+        const { count, error } = await adminSupabaseClient
+            .from('acessos')
+            .select('*', { count: 'exact', head: true });
+        
+        if (!error && count !== null) {
+            const el = document.getElementById('total-visits');
+            if (el) el.innerText = count;
+        }
+    } catch (e) {
+        console.error("Erro ao carregar total de acessos", e);
+    }
 }
 
 function switchTab(tabId) {
