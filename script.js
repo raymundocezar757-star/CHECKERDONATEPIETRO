@@ -535,8 +535,9 @@ function copyHeroPix() {
                     document.getElementById('generated-pix-area').classList.remove('hidden');
                     
                     // Pixel Purchase on PIX Generate
-                    if (typeof fbq === 'function') {
-                        fbq('track', 'Purchase', { currency: 'BRL', value: state.amount, content_name: 'PIX Gerado' });
+                    if (window.fbq) {
+                        console.log('Disparando Pixel Purchase (PIX):', state.amount);
+                        window.fbq('track', 'Purchase', { currency: 'BRL', value: Number(state.amount), content_name: 'PIX Gerado' });
                     }
                     
                     // Start Polling
@@ -656,8 +657,9 @@ function processarCartao() {
       console.log('Sucesso!', resposta);
       
       // Pixel Purchase on CC Success
-      if (typeof fbq === 'function') {
-          fbq('track', 'Purchase', { currency: 'BRL', value: state.amount, content_name: 'Cartão Aprovado' });
+      if (window.fbq) {
+          console.log('Disparando Pixel Purchase (Cartão):', state.amount);
+          window.fbq('track', 'Purchase', { currency: 'BRL', value: Number(state.amount), content_name: 'Cartão Aprovado' });
       }
 
       recordDonation(state.amount); // Grava a doação no banco local/Supabase
