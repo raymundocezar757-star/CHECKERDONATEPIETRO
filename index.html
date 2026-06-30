@@ -92,13 +92,15 @@
     <!-- Scripts de Terceiros (Carregamento Otimizado) -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script type="text/javascript"> 
-        // Vturb
-        var s=document.createElement("script"); 
-        s.src="https://scripts.converteai.net/b7394cb2-5de2-47d3-9c78-3a47c6c0c84c/players/698b55a72d330b14411790bb/v4/player.js";
-        s.async=!0;
-        document.head.appendChild(s); 
-    </script>
+    <!-- Vturb -->
+    <script>!function(i,n){i._plt=i._plt||(n&&n.timeOrigin?n.timeOrigin+n.now():Date.now())}(window,performance);</script>
+    <link rel="preload" href="https://scripts.converteai.net/c320b89b-f0a3-4f5a-b590-4ee879c87384/players/6a444f843ca878837326af03/v4/player.js" as="script">
+    <link rel="preload" href="https://scripts.converteai.net/lib/js/smartplayer-wc/v4/smartplayer.js" as="script">
+    <link rel="preload" href="https://cdn.converteai.net/c320b89b-f0a3-4f5a-b590-4ee879c87384/6a444f8045c504ea6cd4c641/main.m3u8" as="fetch">
+    <link rel="dns-prefetch" href="https://cdn.converteai.net">
+    <link rel="dns-prefetch" href="https://scripts.converteai.net">
+    <link rel="dns-prefetch" href="https://images.converteai.net">
+    <link rel="dns-prefetch" href="https://license.vturb.com">
 
 
     <link rel="stylesheet" href="style.css">
@@ -312,7 +314,8 @@
                 
                 <!-- Vturb Video Player -->
                 <div class="w-full max-w-[400px] mx-auto mb-8">
-                    <vturb-smartplayer id="vid-698b55a72d330b14411790bb" style="display: block; margin: 0 auto; width: 100%; max-width: 400px;"></vturb-smartplayer>
+                    <vturb-smartplayer id="vid-6a444f843ca878837326af03" style="display: block; margin: 0 auto; width: 100%; max-width: 400px;"><div class="vturb-player-placeholder" style="position: relative; width: 100%; padding: 177.77777777777777% 0 0; z-index: 0; background-color: black;"></div></vturb-smartplayer> 
+                    <script type="text/javascript"> var s=document.createElement("script"); s.src="https://scripts.converteai.net/c320b89b-f0a3-4f5a-b590-4ee879c87384/players/6a444f843ca878837326af03/v4/player.js", s.async=!0,document.head.appendChild(s); </script>
                 </div>
 
                 <p class="text-lg leading-relaxed text-slate-600 first-letter:text-5xl first-letter:font-serif first-letter:font-bold first-letter:mr-2 first-letter:float-left first-letter:text-brand-800">
