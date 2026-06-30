@@ -137,6 +137,30 @@ async function loadRecoveryData() {
 
     try {
         const supabaseClient = adminSupabaseClient || supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // Fetch all orders for stats
+        const { data: allOrders, error: statsError } = await supabaseClient.from('pedidos').select('valor, status, metodo');
+        if (!statsError && allOrders) {
+            let arrecadado = 0;
+            let apoiadores = 0;
+            let pendentesPix = 0;
+
+            allOrders.forEach(o => {
+                const val = Number(o.valor) || 0;
+                // Assuming success statuses are Pago or COMPLETED
+                if (o.status === 'Pago' || o.status === 'COMPLETED' || o.status === 'success') {
+                    arrecadado += val;
+                    apoiadores++;
+                } else if (o.status === 'Pendente' && o.metodo === 'PIX') {
+                    pendentesPix++;
+                }
+            });
+
+            document.getElementById('stat-arrecadado').innerText = 'R$ ' + arrecadado.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+            document.getElementById('stat-apoiadores').innerText = apoiadores;
+            document.getElementById('stat-pendentes').innerText = pendentesPix;
+        }
+
         const { data: orders, error } = await supabaseClient.from('pedidos').select('*').order('created_at', { ascending: false }).limit(50);
         
         if (error) throw error;
