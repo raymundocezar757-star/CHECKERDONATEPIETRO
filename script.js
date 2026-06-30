@@ -8,28 +8,7 @@
 })();
 
 
-// --- Admin Settings Logic ---
-(function() {
-    try {
-        const settings = JSON.parse(localStorage.getItem('admin_settings') || '{}');
-        const defaultPixel = '619345180649856';
-        const pixelId = settings.pixel_active ? settings.pixel_id : defaultPixel;
-        
-        if (pixelId) {
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', pixelId);
-            fbq('track', 'PageView');
-            console.log('Facebook Pixel Initialized: ' + pixelId);
-        }
-    } catch (e) { console.error('Error loading pixel', e); }
-})();
+// --- Admin Settings Logic (Removed to use hardcoded Pixel in HTML) ---
 
 // --- State Management ---
         const extraDonations = Number(localStorage.getItem('extra_donations')) || 0;
