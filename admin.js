@@ -4,7 +4,33 @@ document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
     loadSettings();
     loadRecoveryData();
+    initPresence();
 });
+
+let adminSupabaseClient = null;
+const SUPABASE_URL = 'https://rlygwgykgptmeyhyudqz.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_QVZOmb1sfSS0UMlF7M_F_A_G3R4U4JA';
+
+function initPresence() {
+    adminSupabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const room = adminSupabaseClient.channel('online-users');
+    
+    room.on('presence', { event: 'sync' }, () => {
+        const newState = room.presenceState();
+        let count = 0;
+        for (let key in newState) {
+            count += newState[key].length;
+        }
+        
+        const countEl = document.getElementById('online-count');
+        if (countEl) {
+            // Adds a minimum floor of 1 if admin is the only one
+            // We subtract 1 to not count the admin panel itself, but ensure it shows real users
+            const displayCount = Math.max(0, count - 1);
+            countEl.innerText = displayCount;
+        }
+    }).subscribe();
+}
 
 function switchTab(tabId) {
     // Hide all tabs
@@ -83,7 +109,7 @@ async function loadRecoveryData() {
     const SUPABASE_KEY = 'sb_publishable_QVZOmb1sfSS0UMlF7M_F_A_G3R4U4JA';
 
     try {
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = adminSupabaseClient || supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         const { data: orders, error } = await supabaseClient.from('pedidos').select('*').order('created_at', { ascending: false }).limit(50);
         
         if (error) throw error;

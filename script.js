@@ -123,6 +123,17 @@ let supabaseClient = null;
     
     if (SUPABASE_URL && SUPABASE_KEY) {
         supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // Supabase Realtime Presence (Track Online Users)
+        const room = supabaseClient.channel('online-users');
+        room.subscribe(async (status) => {
+            if (status === 'SUBSCRIBED') {
+                await room.track({
+                    online_at: new Date().toISOString(),
+                    page: window.location.pathname
+                });
+            }
+        });
     }
 })();
 
